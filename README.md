@@ -1,6 +1,8 @@
-# Still On The Line
+# Dialtone
 
 ### The clinic phone line that keeps booking patients while the AI behind it is down.
+
+*A dialtone means the line is alive. This one stays alive even when the model doesn't.*
 
 Every "AI receptionist" demo works — until OpenAI has a bad afternoon and the
 phone line goes silent on a patient calling about a refill. **Still On The Line**
