@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Still On The Line — Cedar Family Clinic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+<main>
+  <!-- LEFT 42% — the call (context, quieter) -->
+  <section id="callPane" aria-label="Live call">
+    <div class="line-label">CEDAR FAMILY CLINIC · main line</div>
+    <div id="waveform" class="waveform" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div id="transcript" class="transcript" role="log" aria-live="polite" aria-label="Call transcript">
+      <div class="empty">Call not started. Press <b>Start call</b> — then drive the caller with the scripted lines, or hold the mic.</div>
+    </div>
+    <div class="call-controls">
+      <button id="startBtn" class="btn primary">Start call</button>
+      <button id="micBtn" class="btn" disabled>Hold to talk</button>
+    </div>
+    <div id="callerScript" class="caller-script" hidden></div>
+  </section>
+
+  <!-- RIGHT 58% — the resilience (the hero) -->
+  <section id="resPane" aria-label="Resilience">
+    <div class="pill-wrap">
+      <div id="pill" class="pill up" role="status" aria-live="assertive">
+        <span class="glyph">●</span><span class="who">OPENAI / GEMINI</span><span class="word">UP</span>
+      </div>
+      <div id="pillSub" class="pill-sub">brain healthy · serving every turn</div>
+    </div>
+
+    <div class="served-row">
+      <span class="served-label">THIS TURN SERVED BY</span>
+      <span id="servedBy" class="served-badge llm">LLM · gemini-2.0-flash</span>
+    </div>
+
+    <div id="apptCard" class="appt empty" aria-label="Appointment record">
+      <div class="appt-title">APPOINTMENT</div>
+      <div id="apptBody" class="appt-body">No appointment yet — ask the agent to book one.</div>
+      <div id="apptMeta" class="appt-meta"></div>
+    </div>
+
+    <div class="ops">
+      <button id="induceBtn" class="btn danger" disabled>Induce outage</button>
+      <button id="restoreBtn" class="btn ok" disabled hidden>Restore</button>
+      <div id="reason" class="reason">healthy</div>
+    </div>
+  </section>
+</main>
+<audio id="player" hidden></audio>
+<script src="/app.js"></script>
+</body>
+</html>

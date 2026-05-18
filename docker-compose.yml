@@ -1,0 +1,8 @@
+services:
+  app:
+    build: .
+    ports: ["3000:3000"]
+    environment:
+      ELEVENLABS_API_KEY: ${ELEVENLABS_API_KEY:?set ELEVENLABS_API_KEY in your shell or .env}
+    volumes:
+      - ./data:/app/data

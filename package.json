@@ -1,0 +1,17 @@
+{
+  "name": "still-on-the-line",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "description": "A clinic phone line that keeps booking patients through a live LLM-provider outage.",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "better-sqlite3": "^11.3.0",
+    "express": "^4.21.0",
+    "ws": "^8.18.0"
+  }
+}
