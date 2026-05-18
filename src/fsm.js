@@ -95,6 +95,18 @@ export function fsmTurn(text, mem) {
   let action = null;
   let reply;
 
+  // Intent barge-in: a caller can change their mind ("actually, I also need a
+  // refill") from any non-confirmation state. Without this the FSM can get
+  // wedged mid-slot-fill across a tier switch and repeat a reprompt forever.
+  if (
+    ["book", "reschedule", "refill", "hours"].includes(intent) &&
+    !["BOOK_CONFIRM", "RESCHED_CONFIRM", "REFILL_CONFIRM"].includes(mem.state) &&
+    mem.state !== "INTENT" && mem.state !== "GREETING"
+  ) {
+    mem.state = "INTENT";
+    mem.slots = {};
+  }
+
   const repromptDate = "What day works for you?";
   const repromptTime = "And what time on that day?";
 
@@ -120,9 +132,11 @@ export function fsmTurn(text, mem) {
     }
     case "BOOK_DATE":
     case "RESCHED_NEW": {
-      const d = findDay(t);
+      const d = findDay(t), tm = findTime(t);
       if (!d) { reply = "I didn't catch the day. " + repromptDate; break; }
       mem.slots.date = d;
+      if (tm) { mem.slots.time = tm; mem.state = "BOOK_CONFIRM";
+        reply = `So that's ${d} at ${tm}${mem.slots.reschedule ? ", rescheduled" : ""}. Shall I confirm it?`; break; }
       mem.state = mem.slots.reschedule ? "RESCHED_TIME" : "BOOK_TIME";
       reply = `Got it, ${d}. ${repromptTime}`; break;
     }

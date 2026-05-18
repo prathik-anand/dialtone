@@ -38,14 +38,21 @@ main{display:grid;grid-template-columns:42% 58%;height:100vh;min-height:600px}
 .turn.agent{align-self:flex-end;background:#10241f;color:var(--text);
   border:1px solid #1c3a32}
 .turn.newest{color:var(--text);font-weight:700}
+.dock{flex-shrink:0;display:flex;flex-direction:column;gap:12px;
+  border-top:1px solid var(--line);padding-top:16px}
 .call-controls{display:flex;gap:10px}
-.caller-script{display:flex;flex-wrap:wrap;gap:8px}
-.caller-script button{font:400 12px/1.3 var(--mono);background:transparent;
+.caller-script{display:flex;flex-direction:column;gap:8px}
+.caller-script-label{font:500 11px/1 var(--mono);color:var(--muted);
+  letter-spacing:.16em}
+.caller-script-list{display:flex;flex-direction:column;gap:6px;
+  max-height:168px;overflow-y:auto;padding-right:4px}
+.caller-script-list button{font:400 12px/1.35 var(--mono);background:transparent;
   color:var(--muted);border:1px solid var(--line);border-radius:8px;
-  padding:8px 10px;cursor:pointer;text-align:left}
-.caller-script button:hover:not(:disabled){border-color:var(--accent);color:var(--text)}
-.caller-script button.done{opacity:.4;text-decoration:line-through}
-.caller-script button:disabled{cursor:default}
+  padding:8px 11px;cursor:pointer;text-align:left;flex-shrink:0}
+.caller-script-list button:hover:not(:disabled){border-color:var(--accent);color:var(--text)}
+.caller-script-list button.done{opacity:.35;text-decoration:line-through}
+.caller-script-list button.next{border-color:var(--accent);color:var(--text)}
+.caller-script-list button:disabled{cursor:default}
 
 /* RIGHT — the hero */
 #resPane{background:var(--surface);padding:40px 44px;display:flex;

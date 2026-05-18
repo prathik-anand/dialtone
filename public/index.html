@@ -18,11 +18,16 @@
     <div id="transcript" class="transcript" role="log" aria-live="polite" aria-label="Call transcript">
       <div class="empty">Call not started. Press <b>Start call</b> — then drive the caller with the scripted lines, or hold the mic.</div>
     </div>
-    <div class="call-controls">
-      <button id="startBtn" class="btn primary">Start call</button>
-      <button id="micBtn" class="btn" disabled>Hold to talk</button>
+    <div class="dock">
+      <div id="callerScript" class="caller-script" hidden>
+        <div class="caller-script-label">SCRIPTED CALLER · click in order</div>
+        <div id="callerScriptList" class="caller-script-list"></div>
+      </div>
+      <div class="call-controls">
+        <button id="startBtn" class="btn primary">Start call</button>
+        <button id="micBtn" class="btn" disabled>Hold to talk</button>
+      </div>
     </div>
-    <div id="callerScript" class="caller-script" hidden></div>
   </section>
 
   <!-- RIGHT 58% — the resilience (the hero) -->

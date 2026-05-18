@@ -94,7 +94,7 @@ export class ConvaiSession {
   sendUserText(text) {
     return new Promise((resolve, reject) => {
       if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return reject(new Error("convai not open"));
-      const to = setTimeout(() => reject(new Error("convai turn timeout")), 9000);
+      const to = setTimeout(() => reject(new Error("convai turn timeout")), 13000);
       this._q.push({ resolve: (v) => { clearTimeout(to); resolve(v); }, reject: (e) => { clearTimeout(to); reject(e); } });
       this.ws.send(JSON.stringify({ type: "user_message", text }));
     });

@@ -74,7 +74,16 @@ app.post("/api/turn", async (req, res) => {
             text: `Caller context carried over during an outage: ${JSON.stringify(s.fsmMem.slots)}. Continue seamlessly.` })); } catch {}
         }
         s.wasDown = false;
-        return await s.convai.sendUserText(transcript);
+        try {
+          return await s.convai.sendUserText(transcript);
+        } catch (e) {
+          // One reconnect attempt — a dropped WS is a transient provider blip,
+          // not a reason to fail the caller's turn before we've really tried.
+          console.log(`[turn] convai err "${String(e).slice(0,60)}" — reconnecting once`);
+          try { s.convai.close(); s.convai = new ConvaiSession(); await s.convai.open();
+            return await s.convai.sendUserText(transcript); }
+          catch (e2) { console.log(`[turn] convai reconnect failed: ${String(e2).slice(0,60)}`); throw e2; }
+        }
       },
       callTier2: () => {
         const out = fsmTurn(transcript, s.fsmMem);
@@ -114,6 +123,7 @@ app.post("/api/turn", async (req, res) => {
     }
 
     const audio = await tts(routed.reply);
+    console.log(`[turn] state=${routed.providerState} served=${routed.servedBy} booked=${!!appointment} :: "${transcript.slice(0,48)}"`);
     emit({ event: "turn", servedBy: routed.servedBy, transcript, reply: routed.reply, booked: !!appointment });
     res.json({
       transcript, reply: routed.reply, servedBy: routed.servedBy,

@@ -66,6 +66,26 @@ test("reschedule path collects new day+time and confirms", () => {
   assert.equal(o.at(-1).action.type, "reschedule");
 });
 
+test("intent barge-in: a new intent mid-slot-fill re-routes (no wedged reprompt)", () => {
+  // book flow gets half-filled, then caller pivots to a refill across a tier switch
+  const o = run([
+    "I'd like to book an appointment to see the doctor", // -> BOOK_DATE
+    "Sorry, are you still there? I also need a medication refill", // barge-in -> refill
+    "It's for my Metformin",
+    "yes",
+  ]);
+  assert.equal(o.at(-1).action.type, "refill");
+  assert.equal(o.at(-1).action.record.med, "Metformin");
+  // never the wedged "I didn't catch the time" loop
+  assert.ok(!o.some((r) => /didn't catch the time/i.test(r.reply) && r === o.at(-1)));
+});
+
+test("BOOK_DATE captures a time given in the same utterance (no stuck BOOK_TIME)", () => {
+  const o = run(["I want to book", "Can I come Tuesday at 3:15 pm?", "yes"]);
+  assert.equal(o.at(-1).action.type, "book");
+  assert.equal(o.at(-1).action.record.time, "3:15 PM");
+});
+
 test("FSM never returns undefined reply for any state", () => {
   for (const seq of [["x"], ["book"], ["book", "Monday"], ["refill"], ["hi"]]) {
     for (const r of run(seq)) assert.equal(typeof r.reply, "string");

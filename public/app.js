@@ -20,8 +20,8 @@ const SCRIPT = [
 ];
 
 function buildScript() {
-  const box = $("callerScript");
-  box.hidden = false;
+  $("callerScript").hidden = false;
+  const box = $("callerScriptList");
   box.innerHTML = "";
   SCRIPT.forEach((line, i) => {
     const b = document.createElement("button");
@@ -31,6 +31,15 @@ function buildScript() {
     b.onclick = () => sendCallerLine(line, b);
     box.appendChild(b);
   });
+  markNext();
+}
+
+// Highlight the next actionable line so the operator/judge never hunts.
+function markNext() {
+  const btns = [...document.querySelectorAll("#callerScriptList button")];
+  btns.forEach((b) => b.classList.remove("next"));
+  const next = btns.find((b) => !b.classList.contains("done") && !b.disabled);
+  if (next) { next.classList.add("next"); next.scrollIntoView({ block: "nearest" }); }
 }
 
 function addTurn(role, text) {
@@ -63,7 +72,7 @@ async function sendCallerLine(text, btn) {
       player.play().catch(() => {});
     }
     if (j.appointment) renderAppt(j.appointment, j.servedBy);
-    if (btn) btn.classList.add("done");
+    if (btn) { btn.classList.add("done"); markNext(); }
   } catch (e) {
     addTurn("agent", "[client error: " + e + "]");
   } finally {
