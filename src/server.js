@@ -1,4 +1,4 @@
-// Still On The Line — server.
+// Dialtone — server.
 //
 // One clinic phone line. One screen. The whole bet: the call survives a live
 // LLM-provider outage and the booking still gets written. Every wow element
@@ -167,4 +167,4 @@ app.post("/api/caller-line", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Still On The Line :: http://localhost:${PORT} :: provider=${gw.state}`));
+app.listen(PORT, () => console.log(`Dialtone :: http://localhost:${PORT} :: provider=${gw.state}`));

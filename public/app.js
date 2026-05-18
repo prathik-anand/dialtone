@@ -1,4 +1,4 @@
-// Still On The Line — frontend. The SSE stream is the single source of truth
+// Dialtone — frontend. The SSE stream is the single source of truth
 // for the resilience pane (the gateway decides; the UI only reflects).
 
 const $ = (id) => document.getElementById(id);
@@ -9,8 +9,7 @@ let busy = false;
 // ---- the scripted caller: a reproducible demo path for clean capture ----
 // (a real /api/turn each time; text override skips live-mic ASR variance)
 const SCRIPT = [
-  "Hi, I'd like to book an appointment to see the doctor.",
-  "Can I come in on Tuesday at 3:15 PM?",
+  "Hi, can I book an appointment to see the doctor Tuesday at 3:15 PM?",
   "— operator: induce the outage now —",
   "Sorry, are you still there? I also need a medication refill.",
   "It's for my Metformin.",

@@ -5,7 +5,7 @@
 *A dialtone means the line is alive. This one stays alive even when the model doesn't.*
 
 Every "AI receptionist" demo works — until OpenAI has a bad afternoon and the
-phone line goes silent on a patient calling about a refill. **Still On The Line**
+phone line goes silent on a patient calling about a refill. **Dialtone**
 is the one entry where *you*, the judge, take the model offline mid-call and
 watch the appointment still get booked.
 
