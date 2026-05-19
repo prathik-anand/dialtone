@@ -104,6 +104,8 @@ main{display:grid;grid-template-columns:42% 58%;height:100vh;min-height:600px}
 .btn.danger{background:rgba(255,92,92,.12);color:var(--alarm);border-color:rgba(255,92,92,.45)}
 .btn.danger:hover:not(:disabled){background:rgba(255,92,92,.2)}
 .btn.ok{background:rgba(63,185,80,.14);color:var(--ok);border-color:rgba(63,185,80,.5)}
+.btn.warn{background:rgba(227,160,8,.13);color:var(--warn);border-color:rgba(227,160,8,.5)}
+.btn.warn:hover:not(:disabled){background:rgba(227,160,8,.22)}
 
 @media(max-width:1024px){
   main{grid-template-columns:1fr;grid-template-rows:auto auto;height:auto}

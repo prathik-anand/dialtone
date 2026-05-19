@@ -10,7 +10,7 @@ import { dirname, join } from "node:path";
 import { ensureAgent, ConvaiSession, sttScribe, tts } from "./elevenlabs.js";
 import { fsmTurn, CLINIC } from "./fsm.js";
 import { openStore, writeAppointment, latestForSession } from "./store.js";
-import { gw, subscribe, emit, induceOutage, restore, routeTurn, tierOneBlocked } from "./gateway.js";
+import { gw, subscribe, emit, induceOutage, induceDegraded, restore, routeTurn, tierOneBlocked } from "./gateway.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -150,6 +150,7 @@ app.post("/api/tool/book", (req, res) => {
 });
 
 app.post("/api/outage/induce", (_req, res) => { induceOutage(); res.json({ state: gw.state }); });
+app.post("/api/degrade/induce", (_req, res) => { induceDegraded(); res.json({ state: gw.state }); });
 app.post("/api/outage/restore", (_req, res) => { restore(); res.json({ state: gw.state }); });
 
 app.get("/api/appointment", (req, res) => res.json({ appointment: latestForSession(req.query.session) }));

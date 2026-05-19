@@ -18,6 +18,13 @@
 
 const SLOW_MS = 9000;
 
+// Brownout SLA: a live patient call cannot wait longer than this on the brain.
+// A model that can't answer within DEGRADED_DEADLINE_MS is "technically up but
+// unusable" (TrueFailover's distinction) — TIER 1 is still genuinely attempted
+// every DEGRADED turn, just raced against this real deadline.
+const DEGRADED_DEADLINE_MS = 1200;
+const DEADLINE_MISS = Symbol("deadline-miss");
+
 export const gw = {
   state: "UP",          // UP | DEGRADED | DOWN
   induced: false,       // operator forced the outage (vs an organic failure)
@@ -41,6 +48,16 @@ export function emit(extra = {}) {
 export function induceOutage() {
   gw.state = "DOWN"; gw.induced = true; gw.lastReason = "operator induced outage";
   emit({ event: "outage_induced" });
+}
+
+// Operator forces the brownout (vs an organic >SLOW_MS / erroring brain). Same
+// honesty posture as induceOutage(): the button just forces what a real model
+// brownout would do on its own — DEGRADED routing then genuinely races a real
+// TIER 1 attempt against DEGRADED_DEADLINE_MS and falls to the deterministic
+// TIER 2 on a miss. Not a label.
+export function induceDegraded() {
+  gw.state = "DEGRADED"; gw.induced = true; gw.lastReason = "operator induced brownout";
+  emit({ event: "degrade_induced" });
 }
 
 export function restore() {
@@ -71,7 +88,26 @@ export async function routeTurn({ callTier1, callTier2 }) {
   if (gw.state === "DOWN") {
     return { ...(await callTier2()), providerState: "DOWN" };
   }
-  // UP or DEGRADED: attempt the real brain, fall through on any failure/slowness.
+  if (gw.state === "DEGRADED") {
+    // Brownout: genuinely attempt the real TIER 1, raced against a real tight
+    // deadline. On a miss OR a throw, genuinely complete on the deterministic
+    // TIER 2. The real degradation path — not a cosmetic amber flip.
+    let timer;
+    const deadline = new Promise((resolve) => {
+      timer = setTimeout(() => resolve(DEADLINE_MISS), DEGRADED_DEADLINE_MS);
+    });
+    const t1p = Promise.resolve().then(callTier1);
+    t1p.catch(() => {}); // a late rejection of the losing promise must not crash the process
+    let winner;
+    try { winner = await Promise.race([t1p, deadline]); }
+    catch { winner = DEADLINE_MISS; } // TIER 1 threw before the deadline
+    clearTimeout(timer);
+    if (winner !== DEADLINE_MISS) {
+      return { reply: winner, servedBy: "LLM_GEMINI", providerState: "DEGRADED" };
+    }
+    return { ...(await callTier2()), providerState: "DEGRADED" };
+  }
+  // UP: attempt the real brain, fall through on any failure/slowness.
   const started = Date.now();
   try {
     const t1 = await callTier1();

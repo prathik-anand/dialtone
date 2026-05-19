@@ -124,12 +124,15 @@ function applyState(s) {
       b.textContent = "LLM · gemini-2.0-flash";
     }
   }
-  // operator buttons reflect state
-  const down = s.state === "DOWN";
-  $("induceBtn").hidden = down;
-  $("induceBtn").disabled = down || !sessionId;
-  $("restoreBtn").hidden = !down;
-  $("restoreBtn").disabled = !down;
+  // operator buttons reflect state: the two failure controls only when healthy,
+  // restore on any non-UP state (brownout OR hard down).
+  const isUp = s.state === "UP";
+  $("induceBtn").hidden = !isUp;
+  $("induceBtn").disabled = !isUp || !sessionId;
+  $("degradeBtn").hidden = !isUp;
+  $("degradeBtn").disabled = !isUp || !sessionId;
+  $("restoreBtn").hidden = isUp;
+  $("restoreBtn").disabled = isUp;
 }
 
 const es = new EventSource("/api/events");
@@ -149,6 +152,7 @@ $("startBtn").onclick = async () => {
     $("startBtn").textContent = "Call live";
     $("micBtn").disabled = false;
     $("induceBtn").disabled = false;
+    $("degradeBtn").disabled = false;
   } catch (e) {
     $("startBtn").textContent = "Start call";
     $("startBtn").disabled = false;
@@ -156,6 +160,7 @@ $("startBtn").onclick = async () => {
   }
 };
 
+$("degradeBtn").onclick = () => fetch("/api/degrade/induce", { method: "POST" });
 $("induceBtn").onclick = () => fetch("/api/outage/induce", { method: "POST" });
 $("restoreBtn").onclick = () => fetch("/api/outage/restore", { method: "POST" });
 
