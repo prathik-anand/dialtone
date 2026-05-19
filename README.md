@@ -33,8 +33,13 @@ model resumes the same call mid-sentence.
 - **It runs on one credential.** ElevenLabs hosts the model (ConvAI,
   `gemini-2.0-flash`), the speech-to-text (Scribe), and the voice (TTS). No
   separate LLM key — which is exactly why the deterministic tier has to be real.
-- **Degraded, not just down.** A slow or erroring brain trips the same gateway
-  on its own — the button just forces what a real provider brownout does anyway.
+- **Three states, not two: UP · DEGRADED · DOWN.** A model that is merely slow —
+  a brownout, "technically up but unusable" — is its own failure mode. Press
+  **Induce brownout**: the gateway genuinely attempts the real model against a
+  tight 1.2s deadline, genuinely misses it, and the deterministic playbook
+  quietly takes the turn (`provider_state=DEGRADED`, real DB row) — distinct
+  from the hard `HTTP 503` DOWN path. A slow or erroring brain trips the same
+  gateway on its own; the buttons just force what a real provider does anyway.
 
 ## Run it (about 60 seconds, local)
 
@@ -46,8 +51,9 @@ npm start                              # → http://localhost:3000
 
 Or: `ELEVENLABS_API_KEY=sk_... docker compose up`.
 
-Then: **Start call** → click the scripted caller lines → **Induce outage**
-mid-call → watch it keep booking → **Restore**.
+Then: **Start call** → click the scripted caller lines → **Induce brownout**
+(amber, the model goes slow → deterministic playbook takes the turn) →
+**Induce outage** (red, real `HTTP 503`) → watch it keep booking → **Restore**.
 
 ```bash
 npm test                               # 19 credential-free tests
