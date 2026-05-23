@@ -124,13 +124,16 @@ function applyState(s) {
       b.textContent = "LLM · gemini-2.0-flash";
     }
   }
-  // operator buttons reflect state: the two failure controls only when healthy,
-  // restore on any non-UP state (brownout OR hard down).
+  // operator buttons reflect the real state machine (UP → DEGRADED → DOWN):
+  //  brownout — only from healthy (you start a brownout from UP)
+  //  outage   — from healthy OR escalate an existing brownout (hidden once hard DOWN)
+  //  restore  — any non-UP state (brownout OR hard down)
   const isUp = s.state === "UP";
-  $("induceBtn").hidden = !isUp;
-  $("induceBtn").disabled = !isUp || !sessionId;
+  const isDown = s.state === "DOWN";
   $("degradeBtn").hidden = !isUp;
   $("degradeBtn").disabled = !isUp || !sessionId;
+  $("induceBtn").hidden = isDown;
+  $("induceBtn").disabled = isDown || !sessionId;
   $("restoreBtn").hidden = isUp;
   $("restoreBtn").disabled = isUp;
 }
