@@ -129,7 +129,7 @@ ELEVENLABS_API_KEY=sk_... node --test test/smoke.elevenlabs.test.js   # real-sur
 
 ## Demo video
 
-[**`dialtone-demo.mp4` (90s, 1080p)** — published as a GitHub Release asset.](https://github.com/prathik-anand/dialtone/releases/latest)
+[**`dialtone-demo.mp4` (87s, 1080p)** — published as a GitHub Release asset.](https://github.com/prathik-anand/dialtone/releases/latest)
 A real browser screen-recording of the running build at `localhost:3000`,
 narrated. The "UP → DEGRADED → DOWN → UP" arc is captured live, button-by-button —
 the only thing not real on screen is the voice (synthetic-fallback narration; a
